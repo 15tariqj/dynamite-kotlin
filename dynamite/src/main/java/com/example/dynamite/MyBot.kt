@@ -50,7 +50,13 @@ class MyBot : Bot {
     fun getRandomMove() : Move {
         val listOfNums = listOf<Int>(0,1,2,3,4)
         val randomNum = listOfNums.shuffled().first()
-        if (randomNum == 4 && this.myDynamite <= 0) return getRandomMove()
+        if (randomNum == 4) {
+            if (this.myDynamite <= 0) return getRandomMove()
+            else {
+                this.myDynamite--
+                return Move.D
+            }
+        }
         if (randomNum == 3 && this.opponentsDynamite <= 0) return getRandomMove()
         return Move.values()[randomNum]
     }
