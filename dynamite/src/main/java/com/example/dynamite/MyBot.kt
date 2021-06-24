@@ -20,7 +20,7 @@ class MyBot : Bot {
 
         if (gamestate.rounds.size < 100) return getRandomMove()
 
-        if (gamestate.rounds.size >= 100) {
+        if (gamestate.rounds.size == 100) {
             this.beatPreviousMove = getBeatPreviousMoveBool(gamestate)
             this.dynamiteOnDraw = getDynamiteOnDrawBool(gamestate)
         }
@@ -71,6 +71,7 @@ class MyBot : Bot {
             if (doesXBeatY(gamestate.rounds[i].p2, gamestate.rounds[i-1].p1)) wouldBeatPreviousMove++
         }
         val percentage = ((wouldBeatPreviousMove / gamestate.rounds.size) * 100)
+        println("dynamite %age = ${percentage}")
         return percentage > 80
     }
 
@@ -85,6 +86,8 @@ class MyBot : Bot {
         }
         if (draws == 0) return false
         val percentage = (dynamiteOnDraw / draws) * 100
+
+        println("dynamite %age = ${percentage}")
         return percentage > 80
     }
 
