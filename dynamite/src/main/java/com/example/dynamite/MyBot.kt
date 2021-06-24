@@ -111,3 +111,5 @@ class MyBot : Bot {
 // - Use the first 100 games to discern if they're using the "beat previous move bot" and/or "dynamite on draw"
 // - If 80%+ of first 100 games are "beat previous move" and/or 80%+ of draws in first 100 games are "dynamite on draw", adjust accordingly
 // - If all else fails, choose randomly for rest
+
+//TODO: Detect if there's a single one out of RPS that bot prefers, i.e. Rock used 45%+
