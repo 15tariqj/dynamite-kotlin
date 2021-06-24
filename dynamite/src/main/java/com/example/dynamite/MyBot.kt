@@ -25,6 +25,10 @@ class MyBot : Bot {
             this.dynamiteOnDraw = getDynamiteOnDrawBool(gamestate)
         }
 
+        if (gamestate.rounds.size == 800) {
+            println("Dynamite on draw = ${this.dynamiteOnDraw}")
+            println("Beat Previous Move = ${this.beatPreviousMove}")
+        }
         if (this.dynamiteOnDraw) {
             val previousRound = gamestate.rounds.last()
             if (previousRound.p1 == previousRound.p2) return Move.W
