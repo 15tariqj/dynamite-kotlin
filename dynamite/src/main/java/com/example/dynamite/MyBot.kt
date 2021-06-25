@@ -87,7 +87,10 @@ class MyBot : Bot {
         if (numRock > numPaper && numRock > numScissors) return Move.P
         if (numPaper > numScissors && numPaper > numRock) return Move.S
         if (numScissors > numPaper && numScissors > numRock) return Move.R
-        if (this.myDynamite > 0) return Move.D
+        if (this.myDynamite > 0) {
+            this.myDynamite--
+            return Move.D
+        }
         return getRandomMove()
     }
 
