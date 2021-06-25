@@ -20,18 +20,14 @@ class MyBot : Bot {
 
         if (gamestate.rounds.size < 100) return getRandomMove()
 
-        if (gamestate.rounds.size == 100) {
+        if (gamestate.rounds.size >= 100) {
             this.beatPreviousMove = getBeatPreviousMoveBool(gamestate)
             this.dynamiteOnDraw = getDynamiteOnDrawBool(gamestate)
         }
 
-        if (gamestate.rounds.size == 800) {
-            println("Dynamite on draw = ${this.dynamiteOnDraw}")
-            println("Beat Previous Move = ${this.beatPreviousMove}")
-        }
         if (this.dynamiteOnDraw) {
             val previousRound = gamestate.rounds.last()
-            if (previousRound.p1 == previousRound.p2) return Move.W
+            if (previousRound.p1 == previousRound.p2 && this.opponentsDynamite > 0) return Move.W
         }
         if (this.beatPreviousMove) {
             val previousMove = gamestate.rounds.last().p1
@@ -70,9 +66,8 @@ class MyBot : Bot {
         for (i in 1 until gamestate.rounds.size) {
             if (doesXBeatY(gamestate.rounds[i].p2, gamestate.rounds[i-1].p1)) wouldBeatPreviousMove++
         }
-        val percentage = ((wouldBeatPreviousMove / gamestate.rounds.size) * 100)
-        println("dynamite %age = ${percentage}")
-        return percentage > 80
+        val percentage = ((wouldBeatPreviousMove / gamestate.rounds.size.toDouble()) * 100.0)
+        return percentage > 80.0
     }
 
     fun getDynamiteOnDrawBool(gamestate: Gamestate) : Boolean {
@@ -85,9 +80,7 @@ class MyBot : Bot {
             }
         }
         if (draws == 0) return false
-        val percentage = (dynamiteOnDraw / draws) * 100
-
-        println("dynamite %age = ${percentage}")
+        val percentage = (dynamiteOnDraw / draws.toDouble()) * 100.0
         return percentage > 80
     }
 
@@ -103,7 +96,7 @@ class MyBot : Bot {
 
     fun outsmartBeatPreviousMove(previousMove: Move) : Move {
         return when (previousMove) {
-            Move.W -> Move.D
+            Move.W -> Move.P
             Move.R -> Move.S
             Move.D -> Move.R
             Move.S -> Move.P
