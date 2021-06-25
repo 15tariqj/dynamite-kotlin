@@ -18,13 +18,16 @@ class MyBot : Bot {
 
         if (gamestate.rounds.isNotEmpty()) if (gamestate.rounds.last().p2 == Move.D) this.opponentsDynamite--
 
-        if (gamestate.rounds.size < 100) return getRandomMove()
+        if (gamestate.rounds.size == 0) return getRandomMove()
 
-        if (gamestate.rounds.size >= 100) {
+        if (gamestate.rounds.size >= 1) {
             this.beatPreviousMove = getBeatPreviousMoveBool(gamestate)
             this.dynamiteOnDraw = getDynamiteOnDrawBool(gamestate)
         }
 
+        if (gamestate.rounds.size > 5 && isOpponentOnStreakOfSameMove(gamestate)) {
+            return getMoveThatBeatsThisMove(gamestate.rounds.last().p2)
+        }
         if (this.dynamiteOnDraw) {
             val previousRound = gamestate.rounds.last()
             if (previousRound.p1 == previousRound.p2 && this.opponentsDynamite > 0) return Move.W
@@ -33,11 +36,12 @@ class MyBot : Bot {
             val previousMove = gamestate.rounds.last().p1
             return outsmartBeatPreviousMove(previousMove)
         }
-        return getMoveThatBeatsOpponentsMostLikelyMove(gamestate)
+        return getRandomMove()
+        //return getMoveThatBeatsOpponentsMostLikelyMove(gamestate)
     }
 
     fun getRandomMove() : Move {
-        val listOfNums = listOf<Int>(0,1,2,3,4)
+        val listOfNums = listOf<Int>(0,1,2,4)
         val randomNum = listOfNums.shuffled().first()
         if (randomNum == 4) {
             if (this.myDynamite <= 0) return getRandomMove()
@@ -48,6 +52,24 @@ class MyBot : Bot {
         }
         if (randomNum == 3 && this.opponentsDynamite <= 0) return getRandomMove()
         return Move.values()[randomNum]
+    }
+
+    fun isOpponentOnStreakOfSameMove(gamestate: Gamestate) : Boolean {
+        val opponentsLastMove : Move = gamestate.rounds.last().p2
+        for (i in 2..3) {
+            if (opponentsLastMove != gamestate.rounds[gamestate.rounds.size - i]) return false
+        }
+        return true
+    }
+
+    fun getMoveThatBeatsThisMove(thisMove: Move) : Move {
+        return when (thisMove) {
+            Move.D -> Move.W
+            Move.R -> Move.P
+            Move.W -> Move.R
+            Move.P -> Move.S
+            Move.S -> Move.R
+        }
     }
 
     fun getBeatPreviousMoveBool(gamestate: Gamestate) : Boolean {
@@ -87,10 +109,6 @@ class MyBot : Bot {
         if (numRock > numPaper && numRock > numScissors) return Move.P
         if (numPaper > numScissors && numPaper > numRock) return Move.S
         if (numScissors > numPaper && numScissors > numRock) return Move.R
-        if (this.myDynamite > 0) {
-            this.myDynamite--
-            return Move.D
-        }
         return getRandomMove()
     }
 
@@ -130,3 +148,5 @@ class MyBot : Bot {
 // - If all else fails, choose randomly for rest
 
 //TODO: Detect if there's a single one out of RPS that bot prefers, i.e. Rock used 45%+
+
+//TODO: Detect if user sticking to winning move
