@@ -33,18 +33,7 @@ class MyBot : Bot {
             val previousMove = gamestate.rounds.last().p1
             return outsmartBeatPreviousMove(previousMove)
         }
-        return getRandomMove()
-
-
-        /*if(myDynamite > 0 && Random.nextBoolean()) {
-            this.myDynamite--
-            return Move.D
-        }
-        else if (gamestate.rounds.isNotEmpty()){
-            if (gamestate.rounds.last().p2.equals(Move.W)) this.opponentsDynamite--
-            return Move.P
-        }
-        return Move.D*/
+        return getMoveThatBeatsOpponentsMostLikelyMove(gamestate)
     }
 
     fun getRandomMove() : Move {
@@ -82,6 +71,24 @@ class MyBot : Bot {
         if (draws == 0) return false
         val percentage = (dynamiteOnDraw / draws.toDouble()) * 100.0
         return percentage > 80
+    }
+
+    fun getMoveThatBeatsOpponentsMostLikelyMove(gamestate: Gamestate) : Move {
+        var numRock : Int = 0
+        var numPaper : Int = 0
+        var numScissors : Int = 0
+        for (round in gamestate.rounds) {
+            when (round.p2) {
+                Move.R -> numRock++
+                Move.P -> numPaper++
+                Move.S -> numScissors++
+            }
+        }
+        if (numRock > numPaper && numRock > numScissors) return Move.P
+        if (numPaper > numScissors && numPaper > numRock) return Move.S
+        if (numScissors > numPaper && numScissors > numRock) return Move.R
+        if (this.myDynamite > 0) return Move.D
+        return getRandomMove()
     }
 
     fun doesXBeatY(x: Move, y: Move) : Boolean {
